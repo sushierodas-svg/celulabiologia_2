@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Célula: Unidad Básica de la Vida - Lección 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores Escolaris */
+            --naranja: #db6015;
+            --amarillo: #f7be00;
+            --azul-oscuro: #244b5a;
+            --rojo-ladrillo: #993921;
+            --azul-claro: #f0f8ff;
+            --blanco: #ffffff;
+            
+            /* Colores adicionales */
+            --gris-claro: #ecf0f1;
+            --gris-oscuro: #34495e;
+            --verde-educativo: #27ae60;
+            --rojo-feedback: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--azul-claro) 0%, var(--blanco) 100%);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor-principal {
+            width: 100%;
+            height: 100%;
+            max-width: 1000px;
+            display: flex;
+            position: relative;
+            background: var(--blanco);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* NAVEGACIÓN */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 48px;
+            cursor: pointer;
+            user-select: none;
+            z-index: 100;
+            padding: 20px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(36, 75, 90, 0.1);
+            color: var(--azul-oscuro);
+        }
+
+        .nav-arrow:hover {
+            background: var(--naranja);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.left {
+            left: 10px;
+        }
+
+        .nav-arrow.right {
+            right: 10px;
+        }
+
+        .nav-arrow.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* DIAPOSITIVAS */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* CONTENIDO GENERAL */
+        .slide-content {
+            height: 100%;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .slide-content::-webkit-scrollbar-track {
+            background: var(--azul-claro);
+        }
+
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--naranja);
+            border-radius: 3px;
+        }
+
+        /* FONDOS DECORATIVOS */
+        .slide-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .slide-bg-pattern.azul {
+            background: linear-gradient(135deg, var(--azul-claro) 0%, rgba(240, 248, 255, 0.5) 100%);
+        }
+
+        .slide-bg-pattern.amarillo {
+            background: linear-gradient(135deg, rgba(247, 190, 0, 0.08) 0%, rgba(219, 96, 21, 0.08) 100%);
+        }
+
+        .slide-content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TIPOGRAFÍA */
+        h1 {
+            font-size: 3em;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: var(--naranja);
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--amarillo);
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: var(--azul-oscuro);
+            font-weight: 600;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        p, li {
+            font-size: 1.05em;
+            color: var(--gris-oscuro);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* SUBTÍTULO */
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--rojo-ladrillo);
+            font-weight: 500;
+            margin-bottom: 40px;
+        }
+
+        .meta-info {
+            font-size: 0.95em;
+            color: var(--naranja);
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--naranja), var(--rojo-ladrillo));
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        /* BOTONES INTERACTIVOS */
+        button {
+            background: linear-gradient(135deg, var(--naranja), var(--rojo-ladrillo));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(219, 96, 21, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, var(--azul-oscuro), #1a3a47);
+            margin-right: 10px;
+        }
+
+        button.success {
+            background: linear-gradient(135deg, var(--verde-educativo), #229954);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        /* GRID DE OPCIONES */
+        .opciones-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .opcion {
+            padding: 20px;
+            border: 2px solid var(--gris-claro);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--blanco);
+            font-size: 1.05em;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .opcion:hover {
+            border-color: var(--naranja);
+            background: rgba(219, 96, 21, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .opcion[draggable="true"]:hover {
+            box-shadow: 0 4px 12px rgba(219, 96, 21, 0.3);
+            cursor: grab;
+        }
+
+        /* Estilos para elementos dentro de drop zones */
+        #eucariota-drop .opcion,
+        #procariota-drop .opcion {
+            margin-bottom: 12px;
+            position: relative;
+            padding-right: 45px;
+        }
+
+        #eucariota-drop .opcion button,
+        #procariota-drop .opcion button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Zona de drop activa */
+        [id$="-drop"] {
+            transition: background-color 0.2s ease;
+        }
+
+        .opcion.selected {
+            border-color: var(--naranja);
+            background: linear-gradient(135deg, rgba(219, 96, 21, 0.1), rgba(247, 190, 0, 0.1));
+        }
+
+        .opcion.correct {
+            border-color: var(--verde-educativo);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .opcion.incorrect {
+            border-color: var(--rojo-feedback);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        /* FEEDBACK */
+        .feedback {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: rgba(39, 174, 96, 0.2);
+            border-left: 4px solid var(--verde-educativo);
+            color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--rojo-feedback);
+            color: #e74c3c;
+        }
+
+        /* ILUSTRACIONES / ÁREAS DE CONTENIDO VISUAL */
+        .visual-container {
+            background: linear-gradient(135deg, var(--azul-claro), rgba(247, 190, 0, 0.1));
+            border-radius: 16px;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(219, 96, 21, 0.2);
+        }
+
+        .cell-illustration {
+            font-size: 120px;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .illustration-icon {
+            font-size: 80px;
+            margin: 15px 0;
+        }
+
+        /* TABLA EDUCATIVA */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--azul-oscuro), #1a3a47);
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--gris-claro);
+        }
+
+        tr:hover {
+            background: rgba(219, 96, 21, 0.05);
+        }
+
+        tr:nth-child(even) {
+            background: var(--azul-claro);
+        }
+
+        /* PREGUNTAS */
+        .question-text {
+            font-size: 1.2em;
+            color: var(--azul-oscuro);
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(247, 190, 0, 0.1);
+            border-left: 4px solid var(--amarillo);
+            border-radius: 4px;
+        }
+
+        /* ÁREAS DE REFLEXIÓN */
+        .reflection-box {
+            background: linear-gradient(135deg, rgba(219, 96, 21, 0.05), rgba(247, 190, 0, 0.05));
+            border: 2px dashed var(--naranja);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-style: italic;
+            color: var(--gris-oscuro);
+        }
+
+        /* ANIMACIÓN DE RECONOCIMIENTO */
+        .celebration {
+            font-size: 60px;
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* INDICADOR DE PROGRESO */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--gris-claro);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--naranja), var(--amarillo));
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .slide-content {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .opciones-container {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-arrow {
+                font-size: 32px;
+                padding: 12px;
+            }
+        }
+
+        /* ÍCONOS EDUCATIVOS */
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .objetivo-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(219, 96, 21, 0.08);
+            border-left: 4px solid var(--naranja);
+            border-radius: 4px;
+        }
+
+        .palabra-clave {
+            padding: 20px;
+            margin: 15px 0;
+            background: linear-gradient(135deg, var(--blanco), var(--azul-claro));
+            border: 2px solid var(--naranja);
+            border-radius: 12px;
+        }
+
+        .palabra-clave strong {
+            color: var(--naranja);
+            font-size: 1.2em;
+        }
+
+        .palabra-clave em {
+            color: var(--azul-oscuro);
+            font-size: 1.05em;
+        }
+
+        /* INSTRUCCIONES */
+        .instruction-box {
+            background: linear-gradient(135deg, var(--amarillo), rgba(247, 190, 0, 0.5));
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            color: var(--azul-oscuro);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor-principal">
+        <!-- DIAPOSITIVA 1: PORTADA -->
+        <div class="slide active">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+                <div style="animation: slideIn 0.8s ease;">
+                    <div class="cell-illustration">🔬</div>
+                    <h1>La Célula</h1>
+                    <p style="font-size: 1.3em; color: var(--naranja); font-weight: 600;">La unidad básica de los seres vivos</p>
+                    <div class="meta-info" style="justify-content: center;">
+                        <span class="badge">Lección 2</span>
+                        <span class="badge">5° Bachillerato</span>
+                        <span class="badge">Biología</span>
+                    </div>
+                    <p style="margin-top: 40px; font-size: 1.1em; max-width: 600px;">Descubre los secretos microscópicos que hacen posible la vida. En esta lección, exploraremos la estructura y función de las células, las unidades fundamentales de todos los seres vivos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 2: OBJETIVOS -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>📚 Objetivos de Aprendizaje</h2>
+                <p>Al finalizar esta lección, serás capaz de:</p>
+                <div class="objetivo-item">
+                    <strong>Objetivo 1:</strong> Comprender qué es la célula y explicar por qué es considerada la unidad básica de la vida
+                </div>
+                <div class="objetivo-item">
+                    <strong>Objetivo 2:</strong> Identificar las estructuras principales de las células (membrana, citoplasma, núcleo) y sus funciones
+                </div>
+                <div class="objetivo-item">
+                    <strong>Objetivo 3:</strong> Diferenciar entre células procariotas y eucariotas, explicando sus características
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: CONOCIMIENTOS PREVIOS -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>🤔 Activación de Conocimientos Previos</h2>
+                <p>Antes de comenzar, reflexiona sobre estas preguntas:</p>
+                
+                <div style="background: linear-gradient(135deg, rgba(36, 75, 90, 0.05), rgba(219, 96, 21, 0.05)); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <p style="font-weight: 600; color: var(--azul-oscuro); margin-bottom: 15px;">
+                        ❓ ¿Crees que los seres vivos más pequeños (como las bacterias) tienen una estructura similar a la de los organismos grandes?
+                    </p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(247, 190, 0, 0.05), rgba(219, 96, 21, 0.05)); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <p style="font-weight: 600; color: var(--azul-oscuro); margin-bottom: 15px;">
+                        ❓ ¿Qué tienen en común todas las formas de vida que conoces?
+                    </p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(36, 75, 90, 0.05), rgba(247, 190, 0, 0.05)); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <p style="font-weight: 600; color: var(--azul-oscuro); margin-bottom: 15px;">
+                        ❓ ¿Has visto alguna vez una célula bajo el microscopio? ¿Cómo te imaginas que se ve?
+                    </p>
+                </div>
+
+                <p style="margin-top: 30px; font-style: italic; color: var(--naranja);">💡 No hay respuestas correctas o incorrectas. Estos son tus conocimientos previos que enriqueceremos en esta lección.</p>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: PALABRA CLAVE 1 -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>🔑 Palabras Clave</h2>
+                
+                <div class="palabra-clave">
+                    <p style="margin: 0; margin-bottom: 10px;">
+                        <strong style="font-size: 1.3em;">🔬 CÉLULA</strong>
+                    </p>
+                    <p style="margin: 0; color: var(--gris-oscuro);">
+                        La unidad estructural y funcional más pequeña de todo ser viviente. Todas las células se originan de células preexistentes y poseen membrana celular, citoplasma y material genético (ADN).
+                    </p>
+                </div>
+
+                <div class="palabra-clave">
+                    <p style="margin: 0; margin-bottom: 10px;">
+                        <strong style="font-size: 1.3em;">🧬 TEORÍA CELULAR</strong>
+                    </p>
+                    <p style="margin: 0; color: var(--gris-oscuro);">
+                        Principio fundamental que establece que: (1) todos los seres vivos están formados por células, (2) la célula es la unidad de vida, y (3) toda célula proviene de otra célula preexistente.
+                    </p>
+                </div>
+
+                <div class="palabra-clave">
+                    <p style="margin: 0; margin-bottom: 10px;">
+                        <strong style="font-size: 1.3em;">🔍 MICROSCOPIO</strong>
+                    </p>
+                    <p style="margin: 0; color: var(--gris-oscuro);">
+                        Instrumento óptico que permite amplificar la imagen de objetos muy pequeños, haciéndolos visibles. Es esencial para el estudio de las células.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: CONTENIDO - ¿QUÉ ES LA CÉLULA? -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>¿Qué es la Célula?</h2>
+                
+                <p>La <strong>célula</strong> es la unidad fundamental de vida. Es la estructura más pequeña capaz de realizar todas las funciones vitales: nutrición, crecimiento, reproducción y respuesta al ambiente.</p>
+
+                <h3>Características Principales:</h3>
+                <ul>
+                    <li><strong>Unidad estructural:</strong> Todos los seres vivos están formados por una o más células</li>
+                    <li><strong>Unidad funcional:</strong> La célula es el nivel de organización más pequeño que realiza todas las funciones de la vida</li>
+                    <li><strong>Unidad de reproducción:</strong> Todas las células provienen de células preexistentes</li>
+                </ul>
+
+                <div class="visual-container">
+                    <div class="illustration-icon">🧬</div>
+                    <p style="margin-top: 20px; font-weight: 600; color: var(--azul-oscuro);">Las células varían en tamaño, forma y función</p>
+                    <p style="font-size: 0.95em; color: var(--gris-oscuro);">Desde células nerviosas alargadas hasta células sanguíneas redondas, cada tipo está especializado para su función.</p>
+                </div>
+
+                <p style="margin-top: 20px; background: rgba(219, 96, 21, 0.1); padding: 16px; border-radius: 8px; border-left: 4px solid var(--naranja);">
+                    <strong>💡 Dato curioso:</strong> Algunas células son tan pequeñas que necesitamos un microscopio para verlas. El tamaño promedio de una célula es entre 10 y 100 micrómetros.
+                </p>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: CONTENIDO - ESTRUCTURA CELULAR -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>Estructura de la Célula Eucariota</h2>
+                
+                <p>Las células eucariotas (como la células humanas) poseen una estructura compleja con un núcleo definido.</p>
+
+                <h3>🔹 Componentes Principales:</h3>
+
+                <div style="background: white; padding: 16px; border-left: 4px solid var(--naranja); border-radius: 8px; margin: 12px 0;">
+                    <p style="margin: 0; margin-bottom: 6px;"><strong>1. Membrana Plasmática</strong></p>
+                    <p style="margin: 0; color: var(--gris-oscuro); font-size: 0.95em;">Capa protectora que controla qué entra y sale de la célula. Es semipermeable y selectiva.</p>
+                </div>
+
+                <div style="background: white; padding: 16px; border-left: 4px solid var(--amarillo); border-radius: 8px; margin: 12px 0;">
+                    <p style="margin: 0; margin-bottom: 6px;"><strong>2. Citoplasma</strong></p>
+                    <p style="margin: 0; color: var(--gris-oscuro); font-size: 0.95em;">Sustancia gelatinosa dentro de la célula donde ocurren la mayoría de procesos bioquímicos y se encuentran los organelos.</p>
+                </div>
+
+                <div style="background: white; padding: 16px; border-left: 4px solid var(--azul-oscuro); border-radius: 8px; margin: 12px 0;">
+                    <p style="margin: 0; margin-bottom: 6px;"><strong>3. Núcleo</strong></p>
+                    <p style="margin: 0; color: var(--gris-oscuro); font-size: 0.95em;">Organelo membranoso que contiene el ADN (ácido desoxirribonucleico). Es el centro de control de la célula.</p>
+                </div>
+
+                <div class="visual-container">
+                    <div class="illustration-icon">⭕</div>
+                    <p style="margin-top: 15px; font-weight: 600; color: var(--azul-oscuro);">Célula Eucariota</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: CONTENIDO - TIPOS DE CÉLULA -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>Tipos de Células</h2>
+                
+                <p>Las células se clasifican en dos grandes grupos según la presencia o ausencia de núcleo definido:</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">Célula Eucariota</th>
+                                <th style="width: 50%;">Célula Procariota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>✓ Posee núcleo definido</strong></td>
+                                <td><strong>✗ No posee núcleo definido</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Contiene organelos membranosos</td>
+                                <td>No contiene organelos membranosos</td>
+                            </tr>
+                            <tr>
+                                <td>Mayor tamaño (10-100 μm)</td>
+                                <td>Menor tamaño (0.5-5 μm)</td>
+                            </tr>
+                            <tr>
+                                <td>Ejemplos: células animales, vegetales</td>
+                                <td>Ejemplos: bacterias, arqueas</td>
+                            </tr>
+                            <tr>
+                                <td>Se encuentran en organismos complejos</td>
+                                <td>Se encuentran principalmente en microorganismos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p style="margin-top: 20px; background: rgba(39, 174, 96, 0.1); padding: 16px; border-radius: 8px; border-left: 4px solid var(--verde-educativo);">
+                    <strong>✓ Recuerda:</strong> Los seres humanos estamos formados por células eucariotas. Nuestras células poseen un núcleo que contiene nuestro ADN.
+                </p>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: EXPLORACIÓN VISUAL INTERACTIVA -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>🔍 Exploración Visual Interactiva</h2>
+                
+                <p style="margin-bottom: 20px;">Haz clic en cada componente para descubrir más información:</p>
+
+                <div class="visual-container" style="min-height: 400px;">
+                    <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 200px; position: relative;">🔵
+                            <div style="position: absolute; top: 20px; left: -100px; font-size: 60px; cursor: pointer; transition: all 0.3s; opacity: 0.7;" onclick="mostrarInfo('nucleo')" onmouseover="this.style.opacity = '1'; this.style.transform = 'scale(1.2)';" onmouseout="this.style.opacity = '0.7'; this.style.transform = 'scale(1)';">
+                                🔶
+                            </div>
+                            <div style="position: absolute; top: 100px; right: -80px; font-size: 60px; cursor: pointer; transition: all 0.3s; opacity: 0.7;" onclick="mostrarInfo('membrana')" onmouseover="this.style.opacity = '1'; this.style.transform = 'scale(1.2)';" onmouseout="this.style.opacity = '0.7'; this.style.transform = 'scale(1)';">
+                                ⭕
+                            </div>
+                            <div style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); font-size: 60px; cursor: pointer; transition: all 0.3s; opacity: 0.7;" onclick="mostrarInfo('citoplasma')" onmouseover="this.style.opacity = '1'; this.style.transform = 'scale(1.2)';" onmouseout="this.style.opacity = '0.7'; this.style.transform = 'scale(1)';">
+                                💧
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="info-area" style="margin-top: 20px; min-height: 60px;">
+                    <p style="text-align: center; color: var(--gris-oscuro); font-style: italic;">
+                        👆 Haz clic en los elementos para explorar (Núcleo, Membrana, Citoplasma)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: ACTIVIDAD 1 - COMPRENSIÓN -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>✅ Actividad 1: Comprensión</h2>
+                
+                <div class="question-text">
+                    ¿Cuál es la función principal de la membrana plasmática?
+                </div>
+
+                <div class="opciones-container">
+                    <div class="opcion" onclick="verificarRespuesta(this, false)">
+                        Producir energía para la célula
+                    </div>
+                    <div class="opcion" onclick="verificarRespuesta(this, true)">
+                        Controlar qué entra y sale de la célula
+                    </div>
+                    <div class="opcion" onclick="verificarRespuesta(this, false)">
+                        Almacenar el ADN de la célula
+                    </div>
+                    <div class="opcion" onclick="verificarRespuesta(this, false)">
+                        Sintetizar proteínas
+                    </div>
+                </div>
+
+                <div id="feedback-area-1" class="feedback"></div>
+
+                <button id="retry-btn-1" style="display: none; margin-top: 20px;" onclick="reintentar(1)">
+                    🔄 Intentar nuevamente
+                </button>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 10: ACTIVIDAD 2 - JUEGO EDUCATIVO -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>🎮 Actividad 2: Clasificación de Células</h2>
+                
+                <p><strong>📌 Instrucción:</strong> <strong style="color: var(--naranja);">Arrastra cada característica</strong> hacia la columna correcta (<strong style="color: var(--azul-oscuro);">Eucariota</strong> o <strong style="color: var(--naranja);">Procariota</strong>). Para remover un elemento, haz clic en la ✕.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+                    <div style="background: linear-gradient(135deg, rgba(36, 75, 90, 0.1), rgba(36, 75, 90, 0.05)); border: 2px solid var(--azul-oscuro); border-radius: 12px; padding: 20px; min-height: 250px;">
+                        <h3 style="text-align: center; color: var(--azul-oscuro);">🔬 Eucariota</h3>
+                        <div id="eucariota-drop" style="min-height: 200px; padding: 10px;">
+                            <!-- Se llenarán dinámicamente -->
+                        </div>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, rgba(219, 96, 21, 0.1), rgba(247, 190, 0, 0.05)); border: 2px solid var(--naranja); border-radius: 12px; padding: 20px; min-height: 250px;">
+                        <h3 style="text-align: center; color: var(--naranja);">🦠 Procariota</h3>
+                        <div id="procariota-drop" style="min-height: 200px; padding: 10px;">
+                            <!-- Se llenarán dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="items-clasificacion" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <!-- Se llenarán dinámicamente -->
+                </div>
+
+                <button id="verificar-clasificacion" onclick="verificarClasificacion()" style="margin-top: 20px; width: 100%;">
+                    ✓ Verificar Respuesta
+                </button>
+
+                <div id="feedback-area-2" class="feedback"></div>
+
+                <button id="retry-btn-2" style="display: none; margin-top: 20px; width: 100%;" onclick="reintentar(2)">
+                    🔄 Intentar nuevamente
+                </button>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 11: APLICACIÓN PRÁCTICA -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>💡 Aplicación Práctica</h2>
+                
+                <div class="instruction-box">
+                    <p style="margin: 0; margin-bottom: 15px;">🔬 <strong>Situación:</strong> Un científico descubre que un microorganismo causa enfermedad. Necesita diseñar un tratamiento.</p>
+                </div>
+
+                <div class="question-text">
+                    Si el microorganismo es una bacteria (célula procariota), ¿por qué el tratamiento debería dirigirse específicamente a la estructura y función de las células procariotas?
+                </div>
+
+                <p style="font-weight: 600; color: var(--azul-oscuro); margin: 20px 0;">Selecciona la respuesta más completa:</p>
+
+                <div class="opciones-container">
+                    <div class="opcion" onclick="verificarAplicacion(this, false)">
+                        Porque tienen membranas más frágiles
+                    </div>
+                    <div class="opcion" onclick="verificarAplicacion(this, true)">
+                        Porque tienen estructuras y procesos únicos (sin núcleo definido) que las células humanas no comparten
+                    </div>
+                    <div class="opcion" onclick="verificarAplicacion(this, false)">
+                        Porque son más grandes que nuestras células
+                    </div>
+                    <div class="opcion" onclick="verificarAplicacion(this, false)">
+                        Porque no pueden reproducirse
+                    </div>
+                </div>
+
+                <div id="feedback-area-3" class="feedback"></div>
+
+                <div id="explicacion-practica" style="display: none; margin-top: 20px; background: rgba(39, 174, 96, 0.1); border-left: 4px solid var(--verde-educativo); padding: 16px; border-radius: 8px;">
+                    <p style="margin: 0;"><strong>✓ ¡Excelente razonamiento!</strong></p>
+                    <p style="margin: 8px 0 0 0; color: var(--gris-oscuro);">Los antibióticos funcionan atacando características únicas de las bacterias (procariotas) que no existen en nuestras células (eucariotas). Por ejemplo, los antibióticos pueden atacar la pared celular bacteriana sin dañar nuestras células, porque nuestras células no tienen pared celular.</p>
+                </div>
+
+                <button id="retry-btn-3" style="display: none; margin-top: 20px; width: 100%;" onclick="reintentar(3)">
+                    🔄 Intentar nuevamente
+                </button>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 12: REPASO FINAL -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content">
+                <h2>📋 Repaso Final</h2>
+                
+                <p>Responde estas 3 preguntas clave para verificar tu comprensión:</p>
+
+                <div style="margin-top: 30px;">
+                    <div class="question-text" style="margin-bottom: 15px;">
+                        1️⃣ La célula es considerada la unidad básica de la vida porque:
+                    </div>
+                    
+                    <div class="opciones-container" style="margin-bottom: 25px;">
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso1')">
+                            Es la estructura más pequeña visible
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, true, 'repaso1')">
+                            Es la unidad más pequeña que realiza todas las funciones vitales
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso1')">
+                            Es donde se produce la energía
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso1')">
+                            Todas las células tienen la misma estructura
+                        </div>
+                    </div>
+
+                    <div id="feedback-repaso1" class="feedback"></div>
+
+                    <div class="question-text" style="margin-bottom: 15px; margin-top: 25px;">
+                        2️⃣ ¿Cuál es la principal diferencia entre una célula eucariota y una procariota?
+                    </div>
+                    
+                    <div class="opciones-container" style="margin-bottom: 25px;">
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso2')">
+                            Las eucariotas son siempre más grandes
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso2')">
+                            Las procariotas tienen más organelos
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, true, 'repaso2')">
+                            Las eucariotas tienen un núcleo definido; las procariotas no
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso2')">
+                            Las procariotas tienen ADN; las eucariotas no
+                        </div>
+                    </div>
+
+                    <div id="feedback-repaso2" class="feedback"></div>
+
+                    <div class="question-text" style="margin-bottom: 15px; margin-top: 25px;">
+                        3️⃣ ¿Cuál es la función de la membrana plasmática?
+                    </div>
+                    
+                    <div class="opciones-container" style="margin-bottom: 25px;">
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso3')">
+                            Producir energía para todas las funciones celulares
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, true, 'repaso3')">
+                            Controlar selectivamente qué entra y sale de la célula
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso3')">
+                            Almacenar toda la información genética
+                        </div>
+                        <div class="opcion" onclick="verificarRepaso(this, false, 'repaso3')">
+                            Sintetizar todas las proteínas celulares
+                        </div>
+                    </div>
+
+                    <div id="feedback-repaso3" class="feedback"></div>
+                </div>
+
+                <button id="btn-completar-repaso" onclick="completarRepaso()" style="margin-top: 25px; width: 100%;">
+                    ✓ Completar Repaso
+                </button>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 13: METACOGNICIÓN -->
+        <div class="slide">
+            <div class="slide-bg-pattern azul"></div>
+            <div class="slide-content">
+                <h2>🧠 Reflexión Metacognitiva</h2>
+                
+                <p>Tomemos un momento para reflexionar sobre tu aprendizaje:</p>
+
+                <div class="reflection-box">
+                    <div style="text-align: left; width: 100%;">
+                        <p style="font-size: 1.1em; color: var(--azul-oscuro); font-weight: 600; margin-bottom: 15px;">
+                            ¿Qué fue lo más importante que aprendiste hoy sobre las células?
+                        </p>
+                        <div style="background: white; border: 2px dashed var(--naranja); border-radius: 8px; padding: 20px; min-height: 80px; color: var(--gris-oscuro);">
+                            💭 Escribe tu respuesta aquí (reflexión personal)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reflection-box" style="margin-top: 20px;">
+                    <div style="text-align: left; width: 100%;">
+                        <p style="font-size: 1.1em; color: var(--azul-oscuro); font-weight: 600; margin-bottom: 15px;">
+                            ¿Qué concepto te costó más entender? ¿Por qué?
+                        </p>
+                        <div style="background: white; border: 2px dashed var(--amarillo); border-radius: 8px; padding: 20px; min-height: 80px; color: var(--gris-oscuro);">
+                            💭 Escribe tu respuesta aquí (reflexión personal)
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 25px; background: rgba(219, 96, 21, 0.1); padding: 16px; border-radius: 8px; border-left: 4px solid var(--naranja);">
+                    <strong>💡 Tip:</strong> La metacognición (pensar sobre tu propio aprendizaje) te ayuda a consolidar el conocimiento y a mejorar en el futuro.
+                </p>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 14: CIERRE Y RECONOCIMIENTO -->
+        <div class="slide">
+            <div class="slide-bg-pattern amarillo"></div>
+            <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+                <div style="animation: slideIn 0.8s ease;">
+                    <div style="font-size: 80px; margin: 20px 0; animation: bounce 0.6s ease-in-out infinite;">
+                        🏆
+                    </div>
+                    <h2 style="border: none; margin-bottom: 20px;">¡Felicidades!</h2>
+                    <p style="font-size: 1.2em; color: var(--azul-oscuro); margin-bottom: 20px;">
+                        Has completado exitosamente la Lección 2: <strong>La Célula - La Unidad Básica de la Vida</strong>
+                    </p>
+
+                    <div style="background: linear-gradient(135deg, var(--amarillo), rgba(219, 96, 21, 0.3)); border-radius: 12px; padding: 30px; margin: 30px 0;">
+                        <h3 style="color: var(--azul-oscuro); margin-bottom: 15px;">✓ Logros alcanzados:</h3>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>✅ Comprendiste qué es la célula y su importancia</li>
+                            <li>✅ Identificaste las estructuras celulares principales</li>
+                            <li>✅ Diferenciaste células eucariotas y procariotas</li>
+                            <li>✅ Aplicaste tu conocimiento a situaciones prácticas</li>
+                        </ul>
+                    </div>
+
+                    <p style="margin-top: 30px; color: var(--gris-oscuro); font-size: 1.05em;">
+                        Tu dedicación al aprendizaje es el primer paso hacia la comprensión profunda de la biología. 
+                        <br><br>
+                        <strong>¡Estás avanzando en tu camino hacia el dominio científico!</strong>
+                    </p>
+
+                    <div style="margin-top: 30px; font-size: 20px;">
+                        🌟 Tu progreso en Biología está confirmado 🌟
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="nav-arrow left" onclick="diapositivaAnterior()">⬅️</div>
+        <div class="nav-arrow right" onclick="diapositivaSiguiente()">➡️</div>
+    </div>
+
+    <script>
+        // VARIABLES GLOBALES
+        let diapositivaActual = 0;
+        const totalDiapositivas = document.querySelectorAll('.slide').length;
+        let respuestasActividades = {};
+
+        // NAVEGACIÓN
+        function mostrarDiapositiva(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n >= totalDiapositivas) {
+                diapositivaActual = totalDiapositivas - 1;
+            }
+            if (n < 0) {
+                diapositivaActual = 0;
+            }
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[diapositivaActual].classList.add('active');
+            
+            // Actualizar estado de flechas
+            document.querySelector('.nav-arrow.left').classList.toggle('disabled', diapositivaActual === 0);
+            document.querySelector('.nav-arrow.right').classList.toggle('disabled', diapositivaActual === totalDiapositivas - 1);
+
+            // Reinicializar actividades al cambiar de diapositiva
+            limpiarFeedback();
+        }
+
+        function diapositivaAnterior() {
+            if (diapositivaActual > 0) {
+                diapositivaActual--;
+                mostrarDiapositiva(diapositivaActual);
+            }
+        }
+
+        function diapositivaSiguiente() {
+            if (diapositivaActual < totalDiapositivas - 1) {
+                diapositivaActual++;
+                mostrarDiapositiva(diapositivaActual);
+            }
+        }
+
+        // NAVEGACIÓN CON TECLADO
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') diapositivaAnterior();
+            if (e.key === 'ArrowRight') diapositivaSiguiente();
+        });
+
+        // LIMPIEZA DE FEEDBACK
+        function limpiarFeedback() {
+            document.querySelectorAll('.feedback').forEach(fb => fb.classList.remove('show'));
+            document.querySelectorAll('.opcion').forEach(op => {
+                op.classList.remove('selected', 'correct', 'incorrect');
+            });
+            document.querySelectorAll('[id^="retry-btn"]').forEach(btn => btn.style.display = 'none');
+        }
+
+        // ACTIVIDAD 1: COMPRENSIÓN
+        function verificarRespuesta(elemento, esCorrecta) {
+            const feedbackArea = document.getElementById('feedback-area-1');
+            const retryBtn = document.getElementById('retry-btn-1');
+            const opciones = document.querySelectorAll('.slide')[8].querySelectorAll('.opcion');
+
+            // Limpiar selecciones previas
+            opciones.forEach(op => {
+                op.classList.remove('selected', 'correct', 'incorrect');
+            });
+
+            // Marcar seleccionada
+            elemento.classList.add('selected');
+
+            // Mostrar feedback
+            feedbackArea.classList.add('show');
+            
+            if (esCorrecta) {
+                elemento.classList.add('correct');
+                feedbackArea.classList.remove('incorrect');
+                feedbackArea.classList.add('correct');
+                feedbackArea.innerHTML = '✅ <strong>¡Correcto!</strong> La membrana plasmática actúa como un control de entrada y salida selectivo. Es semipermeable, lo que significa que permite que algunos materiales pasen mientras que otros no.';
+                respuestasActividades.act1 = true;
+            } else {
+                elemento.classList.add('incorrect');
+                feedbackArea.classList.remove('correct');
+                feedbackArea.classList.add('incorrect');
+                feedbackArea.innerHTML = '❌ <strong>No es correcto.</strong> Piensa en la función protectora de la membrana. ¿Qué necesita controlar para proteger la célula?';
+                retryBtn.style.display = 'block';
+            }
+        }
+
+        function reintentar(actividad) {
+            limpiarFeedback();
+            
+            if (actividad === 1) {
+                document.getElementById('feedback-area-1').classList.remove('show');
+                document.getElementById('retry-btn-1').style.display = 'none';
+            } else if (actividad === 2) {
+                inicializarClasificacion();
+                document.getElementById('feedback-area-2').classList.remove('show');
+                document.getElementById('retry-btn-2').style.display = 'none';
+            } else if (actividad === 3) {
+                document.getElementById('feedback-area-3').classList.remove('show');
+                document.getElementById('explicacion-practica').style.display = 'none';
+                document.getElementById('retry-btn-3').style.display = 'none';
+            }
+        }
+
+        // ACTIVIDAD 2: CLASIFICACIÓN (Inicialización con Drag and Drop)
+        let draggedElement = null;
+
+        function inicializarClasificacion() {
+            const caracteristicas = [
+                { texto: 'Posee núcleo definido', tipo: 'eucariota' },
+                { texto: 'ADN libre en citoplasma', tipo: 'procariota' },
+                { texto: 'Contiene mitocondrias', tipo: 'eucariota' },
+                { texto: 'No tiene organelos', tipo: 'procariota' },
+                { texto: 'Tamaño: 0.5-5 μm', tipo: 'procariota' },
+                { texto: 'Tamaño: 10-100 μm', tipo: 'eucariota' },
+                { texto: 'Células de bacterias', tipo: 'procariota' },
+                { texto: 'Células humanas', tipo: 'eucariota' },
+                { texto: 'Membrana plasmática', tipo: 'ambas' }
+            ];
+
+            // Limpiar zonas de clasificación
+            document.getElementById('eucariota-drop').innerHTML = '';
+            document.getElementById('procariota-drop').innerHTML = '';
+            
+            // Limpiar contenedor de items
+            const contenedor = document.getElementById('items-clasificacion');
+            contenedor.innerHTML = '';
+
+            caracteristicas.forEach((car, index) => {
+                const div = document.createElement('div');
+                div.className = 'opcion';
+                div.id = `item-${index}`;
+                div.textContent = car.texto;
+                div.dataset.tipo = car.tipo;
+                div.draggable = true;
+                div.style.cursor = 'grab';
+                div.style.userSelect = 'none';
+                
+                // Eventos de drag
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                
+                contenedor.appendChild(div);
+            });
+
+            // Hacer las columnas receptoras de drop
+            setupDropZones();
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            this.style.cursor = 'grabbing';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+            this.style.cursor = 'grab';
+        }
+
+        function setupDropZones() {
+            const dropZones = document.querySelectorAll('[id$="-drop"]');
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.style.backgroundColor = 'rgba(219, 96, 21, 0.2)';
+        }
+
+        function handleDragLeave(e) {
+            this.style.backgroundColor = '';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            this.style.backgroundColor = '';
+            
+            if (draggedElement) {
+                // Mover el elemento a la zona
+                const clonedItem = draggedElement.cloneNode(true);
+                clonedItem.draggable = true;
+                clonedItem.style.cursor = 'grab';
+                clonedItem.style.opacity = '1';
+                clonedItem.style.marginBottom = '8px';
+                
+                // Agregar eventos al elemento clonado
+                clonedItem.addEventListener('dragstart', handleDragStart);
+                clonedItem.addEventListener('dragend', handleDragEnd);
+                
+                // Botón para remover el elemento
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '✕';
+                removeBtn.style.fontSize = '0.8em';
+                removeBtn.style.padding = '2px 8px';
+                removeBtn.style.marginLeft = '10px';
+                removeBtn.style.background = 'rgba(231, 76, 60, 0.3)';
+                removeBtn.style.border = '1px solid #e74c3c';
+                removeBtn.style.cursor = 'pointer';
+                removeBtn.onclick = function() {
+                    clonedItem.remove();
+                };
+                
+                clonedItem.appendChild(removeBtn);
+                this.appendChild(clonedItem);
+                
+                // Remover del contenedor original
+                draggedElement.remove();
+            }
+        }
+
+        function verificarClasificacion() {
+            const eucariota = document.getElementById('eucariota-drop').querySelectorAll('.opcion');
+            const procariota = document.getElementById('procariota-drop').querySelectorAll('.opcion');
+            const feedbackArea = document.getElementById('feedback-area-2');
+            const retryBtn = document.getElementById('retry-btn-2');
+
+            // Limpiar feedback previo
+            feedbackArea.classList.remove('show', 'correct', 'incorrect');
+
+            let aciertos = 0;
+            let total = 0;
+
+            // Verificar eucariotas
+            eucariota.forEach(item => {
+                item.classList.remove('correct', 'incorrect');
+                if (item.dataset.tipo === 'eucariota' || item.dataset.tipo === 'ambas') {
+                    item.classList.add('correct');
+                    aciertos++;
+                } else {
+                    item.classList.add('incorrect');
+                }
+                total++;
+            });
+
+            // Verificar procariotas
+            procariota.forEach(item => {
+                item.classList.remove('correct', 'incorrect');
+                if (item.dataset.tipo === 'procariota' || item.dataset.tipo === 'ambas') {
+                    item.classList.add('correct');
+                    aciertos++;
+                } else {
+                    item.classList.add('incorrect');
+                }
+                total++;
+            });
+
+            feedbackArea.classList.add('show');
+
+            if (aciertos === total && total >= 6) {
+                feedbackArea.classList.add('correct');
+                feedbackArea.innerHTML = '✅ <strong>¡Excelente clasificación!</strong> Has identificado correctamente las características de cada tipo de célula.';
+                respuestasActividades.act2 = true;
+                retryBtn.style.display = 'none';
+            } else if (total === 0) {
+                feedbackArea.classList.add('incorrect');
+                feedbackArea.innerHTML = '❌ <strong>Por favor arrastra elementos a las columnas.</strong> Necesitas clasificar al menos 6 características para continuar.';
+                retryBtn.style.display = 'block';
+            } else {
+                feedbackArea.classList.add('incorrect');
+                feedbackArea.innerHTML = `❌ <strong>Algunos elementos no están correctamente clasificados.</strong> Tienes ${aciertos}/${total} correctos. Revisa los elementos marcados en rojo e intenta nuevamente.`;
+                retryBtn.style.display = 'block';
+            }
+        }
+
+        // ACTIVIDAD 3: APLICACIÓN
+        function verificarAplicacion(elemento, esCorrecta) {
+            const feedbackArea = document.getElementById('feedback-area-3');
+            const explicacion = document.getElementById('explicacion-practica');
+            const retryBtn = document.getElementById('retry-btn-3');
+            const opciones = document.querySelectorAll('.slide')[10].querySelectorAll('.opcion');
+
+            opciones.forEach(op => {
+                op.classList.remove('selected', 'correct', 'incorrect');
+            });
+
+            elemento.classList.add('selected');
+            feedbackArea.classList.add('show');
+
+            if (esCorrecta) {
+                elemento.classList.add('correct');
+                feedbackArea.classList.add('correct');
+                feedbackArea.classList.remove('incorrect');
+                feedbackArea.innerHTML = '✅ <strong>¡Razonamiento científico excepcional!</strong> Identificaste correctamente que los tratamientos deben dirigirse a estructuras únicas.';
+                explicacion.style.display = 'block';
+                respuestasActividades.act3 = true;
+            } else {
+                elemento.classList.add('incorrect');
+                feedbackArea.classList.add('incorrect');
+                feedbackArea.classList.remove('correct');
+                feedbackArea.innerHTML = '❌ <strong>Reflexiona más:</strong> ¿Qué hace que una bacteria sea diferente de nuestras células en cuanto a estructura?';
+                retryBtn.style.display = 'block';
+            }
+        }
+
+        // REPASO FINAL
+        function verificarRepaso(elemento, esCorrecta, id) {
+            const feedbackArea = document.getElementById(`feedback-${id}`);
+            const numPregunta = id.replace('repaso', '');
+            const opciones = document.querySelectorAll(`#feedback-${id}`).closest = true;
+            
+            // Buscar todas las opciones en la pregunta
+            let actual = elemento;
+            while (actual && !actual.classList.contains('opciones-container')) {
+                actual = actual.parentElement;
+            }
+            
+            if (actual) {
+                const opcionesActuales = actual.querySelectorAll('.opcion');
+                opcionesActuales.forEach(op => {
+                    op.classList.remove('selected', 'correct', 'incorrect');
+                });
+            }
+
+            elemento.classList.add('selected');
+            feedbackArea.classList.add('show');
+
+            const respuestasRepaso = {
+                repaso1: { correcta: true, msg: '✅ <strong>Correcto.</strong> La célula realiza todas las funciones vitales: nutrición, crecimiento, reproducción y respuesta al ambiente.' },
+                repaso2: { correcta: true, msg: '✅ <strong>Correcto.</strong> Esta es la diferencia fundamental que clasifica a todas las células vivas.' },
+                repaso3: { correcta: true, msg: '✅ <strong>Correcto.</strong> La permeabilidad selectiva es una de las funciones más importantes de la vida celular.' }
+            };
+
+            if (esCorrecta) {
+                elemento.classList.add('correct');
+                feedbackArea.classList.add('correct');
+                feedbackArea.classList.remove('incorrect');
+                feedbackArea.innerHTML = respuestasRepaso[id].msg;
+            } else {
+                elemento.classList.add('incorrect');
+                feedbackArea.classList.add('incorrect');
+                feedbackArea.classList.remove('correct');
+                feedbackArea.innerHTML = '❌ Intenta nuevamente. Revisa los conceptos clave.';
+            }
+        }
+
+        function completarRepaso() {
+            const preguntas = ['repaso1', 'repaso2', 'repaso3'];
+            let respondidas = 0;
+
+            preguntas.forEach(id => {
+                const feedback = document.getElementById(`feedback-${id}`);
+                if (feedback.classList.contains('show') && feedback.classList.contains('correct')) {
+                    respondidas++;
+                }
+            });
+
+            if (respondidas === 3) {
+                alert('🎉 ¡Repaso completado exitosamente! Haz avanzado a la sección final.');
+            } else {
+                alert('⚠️ Por favor, responde todas las preguntas correctamente antes de continuar.');
+            }
+        }
+
+        // EXPLORACIÓN VISUAL
+        function mostrarInfo(tipo) {
+            const infoArea = document.getElementById('info-area');
+            const infos = {
+                nucleo: {
+                    titulo: '🔶 Núcleo',
+                    descripcion: 'El núcleo es el organelo más importante de la célula eucariota. Contiene el ADN (ácido desoxirribonucleico), que es la molécula que lleva toda la información genética. El núcleo está rodeado por una membrana nuclear y controla todas las actividades celulares.'
+                },
+                membrana: {
+                    titulo: '⭕ Membrana Plasmática',
+                    descripcion: 'La membrana plasmática es la barrera externa que rodea a toda la célula. Es semipermeable, lo que significa que permite el paso de ciertos materiales mientras que evita el paso de otros. Está formada principalmente por lípidos y proteínas, y es esencial para mantener la célula unida.'
+                },
+                citoplasma: {
+                    titulo: '💧 Citoplasma',
+                    descripcion: 'El citoplasma es una sustancia gelatinosa que llena el espacio entre la membrana plasmática y el núcleo. Contiene agua, sales, proteínas y muchos otros componentes químicos. En el citoplasma se encuentran los organelos y ocurren muchas de las reacciones químicas de la vida.'
+                }
+            };
+
+            const info = infos[tipo];
+            infoArea.innerHTML = `<strong style="color: var(--naranja); font-size: 1.2em;">${info.titulo}</strong><p style="margin-top: 12px; color: var(--gris-oscuro);">${info.descripcion}</p>`;
+        }
+
+        // INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', function() {
+            mostrarDiapositiva(0);
+            inicializarClasificacion();
+        });
+    </script>
+</body>
+</html>
